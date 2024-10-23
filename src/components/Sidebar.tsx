@@ -43,24 +43,63 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
 
   return (
     <div
-      className={`bg-white border-r flex flex-col py-4 fixed h-full left-0 top-0 transition-width duration-300 ${isExpanded ? 'w-40' : 'w-16'}`}
+      className={`bg-white border-r flex flex-col py-4 fixed h-full left-0 top-0 transition-all duration-300 ${isExpanded ? 'w-40' : 'w-16'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="w-8 h-8 bg-blue-600 rounded-lg mb-8 flex items-center justify-center text-white font-bold">
+      {/* Logo en la parte superior */}
+      <div className="w-8 h-8 bg-blue-600 rounded-lg mb-8 flex items-center justify-center text-white font-bold mx-auto">
         L
       </div>
 
+      {/* Navegación de íconos */}
       <nav className="flex-1 flex flex-col gap-4">
-        <SidebarIcon icon={<Home />} name="Home" active={selected === 'Home'} onSelect={() => onSelect('Home')} isExpanded={isExpanded} />
-        <SidebarIcon icon={<Filter />} name="Clientes" active={selected === 'Filter'} onSelect={() => onSelect('Filter')} isExpanded={isExpanded} />
-        <SidebarIcon icon={<MessageSquare />} name="Mensajes" active={selected === 'MessageSquare'} onSelect={() => onSelect('MessageSquare')} isExpanded={isExpanded} />
-        <SidebarIcon icon={<Users />} name="Usuarios" active={selected === 'Users'} onSelect={() => onSelect('Users')} isExpanded={isExpanded} />
-        <SidebarIcon icon={<Settings />} name="Configuraciones" active={selected === 'Settings'} onSelect={() => onSelect('Settings')} isExpanded={isExpanded} />
+        <SidebarIcon
+          icon={<Home />}
+          name="Home"
+          active={selected === 'Home'}
+          onSelect={() => onSelect('Home')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<Filter />}
+          name="Clientes"
+          active={selected === 'Filter'}
+          onSelect={() => onSelect('Filter')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<MessageSquare />}
+          name="Mensajes"
+          active={selected === 'MessageSquare'}
+          onSelect={() => onSelect('MessageSquare')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<Users />}
+          name="Usuarios"
+          active={selected === 'Users'}
+          onSelect={() => onSelect('Users')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<Settings />}
+          name="Configuraciones"
+          active={selected === 'Settings'}
+          onSelect={() => onSelect('Settings')}
+          isExpanded={isExpanded}
+        />
       </nav>
 
+      {/* Ícono de búsqueda en la parte inferior */}
       <div className="mt-auto">
-        <SidebarIcon icon={<Search />} name="Buscar" active={selected === 'Search'} onSelect={() => onSelect('Search')} isExpanded={isExpanded} />
+        <SidebarIcon
+          icon={<Search />}
+          name="Buscar"
+          active={selected === 'Search'}
+          onSelect={() => onSelect('Search')}
+          isExpanded={isExpanded}
+        />
       </div>
     </div>
   );

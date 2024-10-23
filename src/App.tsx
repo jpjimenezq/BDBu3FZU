@@ -1,11 +1,29 @@
 import React, { useState } from 'react';
-import { Crown, Zap } from 'lucide-react';
 import Sidebar from './components/Sidebar';
-import SalesFunnel from './components/SalesFunnel';
+import { LoginForm } from './components/LoginForm';
 import Dashboard from './components/Dashboard';
+import SalesFunnel from './components/SalesFunnel';
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState('Home');
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Estado para controlar si el Sidebar está expandido
+
+  const handleLogin = (email: string, password: string) => {
+    if (email === 'admin' && password === 'admin') {
+      setIsAuthenticated(true);
+    } else {
+      alert('Credenciales incorrectas');
+    }
+  };
+
+  const handleSelect = (iconName: string) => {
+    setSelectedIcon(iconName);
+  };
+
+  const handleSidebarToggle = (expanded: boolean) => {
+    setIsSidebarExpanded(expanded); // Actualizamos el estado cuando se expande el Sidebar
+  };
 
   const renderContent = () => {
     switch (selectedIcon) {
@@ -19,24 +37,22 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar selected={selectedIcon} onSelect={setSelectedIcon} />
+    <div className="min-h-screen">
+      {isAuthenticated ? (
+        <div className="flex">
+          {/* Sidebar con los iconos */}
+          <Sidebar selected={selectedIcon} onSelect={handleSelect} onExpand={handleSidebarToggle} />
 
-      <main className="flex-1 pl-24 pr-8 py-8">
-        <header className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold flex items-center gap-2">
-              Hola, Noe<Crown className="w-5 h-5 text-yellow-400" />
-            </h1>
-            <p className="text-blue-600">¡Bienvenido a ConnectaCRM!</p>
+          {/* Contenido principal con espacio dinámico según el ancho del Sidebar */}
+          <div className={`flex-1 p-8 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-16'}`}>
+            {renderContent()}
           </div>
-          <div className="text-gray-600">
-            Martes, 22 de Octubre de 2024
-          </div>
-        </header>
-
-        {renderContent()}
-      </main>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+          <LoginForm onLogin={handleLogin} />
+        </div>
+      )}
     </div>
   );
 };
