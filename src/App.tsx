@@ -28,7 +28,7 @@ const App: React.FC = () => {
             <h1 className="text-2xl font-semibold flex items-center gap-2">
               Hola, Noe<Crown className="w-5 h-5 text-yellow-400" />
             </h1>
-            <p className="text-blue-600">¡Bienvenido a Leadsales!</p>
+            <p className="text-blue-600">¡Bienvenido a ConnectaCRM!</p>
           </div>
           <div className="text-gray-600">
             Martes, 22 de Octubre de 2024

@@ -1,47 +1,66 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Home, Filter, MessageSquare, Users, Settings, Search } from 'lucide-react';
 
 interface SidebarIconProps {
   icon: ReactElement;
+  name: string; // Prop para el nombre del ícono
   active?: boolean;
-  onSelect: () => void;  // Agregamos esta prop para manejar la selección
+  onSelect: () => void;
+  isExpanded: boolean; // Agregar esta prop para verificar si está expandido
 }
 
-const SidebarIcon: React.FC<SidebarIconProps> = ({ icon, active = false, onSelect }) => (
-  <button 
-    onClick={onSelect}  // Detectamos cuando se selecciona el ícono
-    className={`p-3 rounded-xl hover:bg-gray-100 transition ${
+const SidebarIcon: React.FC<SidebarIconProps> = ({ icon, name, active = false, onSelect, isExpanded }) => (
+  <button
+    onClick={onSelect}
+    className={`flex items-center p-3 rounded-xl hover:bg-gray-100 transition ${
       active ? 'bg-gray-100' : ''
-    }`}
+    } ${isExpanded ? 'justify-start' : 'justify-center'}`} // Cambiar justify según el estado
   >
-    {React.cloneElement(icon, { 
+    {React.cloneElement(icon, {
       className: `w-5 h-5 ${active ? 'text-blue-600' : 'text-gray-500'}`
     })}
+    {isExpanded && <span className="ml-2 text-gray-600">{name}</span>} {/* Mostrar el nombre solo si está expandido */}
   </button>
 );
 
 interface SidebarProps {
   selected: string;
-  onSelect: (iconName: string) => void;  // Prop para manejar la selección desde App.tsx
+  onSelect: (iconName: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  let timer: number;
+
+  const handleMouseEnter = () => {
+    timer = window.setTimeout(() => setIsExpanded(true), 1000);
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(timer);
+    setIsExpanded(false);
+  };
+
   return (
-    <div className="w-16 bg-white border-r flex flex-col items-center py-4 fixed h-full left-0 top-0">
+    <div
+      className={`bg-white border-r flex flex-col py-4 fixed h-full left-0 top-0 transition-width duration-300 ${isExpanded ? 'w-40' : 'w-16'}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="w-8 h-8 bg-blue-600 rounded-lg mb-8 flex items-center justify-center text-white font-bold">
         L
       </div>
-      
+
       <nav className="flex-1 flex flex-col gap-4">
-        <SidebarIcon icon={<Home />} active={selected === 'Home'} onSelect={() => onSelect('Home')} />
-        <SidebarIcon icon={<Filter />} active={selected === 'Filter'} onSelect={() => onSelect('Filter')} />
-        <SidebarIcon icon={<MessageSquare />} active={selected === 'MessageSquare'} onSelect={() => onSelect('MessageSquare')} />
-        <SidebarIcon icon={<Users />} active={selected === 'Users'} onSelect={() => onSelect('Users')} />
-        <SidebarIcon icon={<Settings />} active={selected === 'Settings'} onSelect={() => onSelect('Settings')} />
+        <SidebarIcon icon={<Home />} name="Home" active={selected === 'Home'} onSelect={() => onSelect('Home')} isExpanded={isExpanded} />
+        <SidebarIcon icon={<Filter />} name="Clientes" active={selected === 'Filter'} onSelect={() => onSelect('Filter')} isExpanded={isExpanded} />
+        <SidebarIcon icon={<MessageSquare />} name="Mensajes" active={selected === 'MessageSquare'} onSelect={() => onSelect('MessageSquare')} isExpanded={isExpanded} />
+        <SidebarIcon icon={<Users />} name="Usuarios" active={selected === 'Users'} onSelect={() => onSelect('Users')} isExpanded={isExpanded} />
+        <SidebarIcon icon={<Settings />} name="Configuraciones" active={selected === 'Settings'} onSelect={() => onSelect('Settings')} isExpanded={isExpanded} />
       </nav>
 
       <div className="mt-auto">
-        <SidebarIcon icon={<Search />} active={selected === 'Search'} onSelect={() => onSelect('Search')} />
+        <SidebarIcon icon={<Search />} name="Buscar" active={selected === 'Search'} onSelect={() => onSelect('Search')} isExpanded={isExpanded} />
       </div>
     </div>
   );
