@@ -6,6 +6,8 @@ const db = require('./models/db'); // Importa la conexión a la base de datos
 const authMiddleware = require('./middlewares/authMiddleware'); // Middleware de autenticación
 const authController = require('./controllers/authController'); // Controlador de autenticación
 const userController = require('./controllers/userController'); // Importa el controlador de usuarios
+const leadController = require('./controllers/leadController');
+
 
 const app = express();
 app.use(cors());
@@ -24,6 +26,7 @@ app.post('/register', authController.register);
 app.post('/login', authController.login);
 app.post('/token', authController.token);
 app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
+app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });
