@@ -9,10 +9,34 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(email, password);
+
+    try {
+      // Realizar la solicitud al backend para autenticar al usuario
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Si el login es exitoso, llama a la función onLogin y pasa las credenciales
+        onLogin(email, password); // Esto actualizará el estado de autenticación en App.tsx
+      } else {
+        // Si las credenciales son incorrectas, muestra un mensaje de error
+        setErrorMessage(data.message || 'Credenciales incorrectas');
+      }
+    } catch (error) {
+      setErrorMessage('Ocurrió un error en la conexión. Inténtalo de nuevo.');
+      console.error('Error en el login:', error);
+    }
   };
 
   return (
@@ -56,6 +80,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             </button>
           </div>
         </div>
+
+        {errorMessage && (
+          <p className="text-red-500 text-sm">{errorMessage}</p>
+        )}
 
         <button
           type="submit"

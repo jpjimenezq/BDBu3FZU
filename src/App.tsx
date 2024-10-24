@@ -10,11 +10,8 @@ const App: React.FC = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Estado para controlar si el Sidebar está expandido
 
   const handleLogin = (email: string, password: string) => {
-    if (email === 'admin' && password === 'admin') {
-      setIsAuthenticated(true);
-    } else {
-      alert('Credenciales incorrectas');
-    }
+    // Cambia este manejo según tu lógica de autenticación
+    setIsAuthenticated(true); // Asume que las credenciales son correctas si no se lanza un error
   };
 
   const handleSelect = (iconName: string) => {
