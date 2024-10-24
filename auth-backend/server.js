@@ -1,3 +1,5 @@
+require('dotenv').config();  // Cargar las variables de entorno desde .env
+
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -7,13 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Configurar la conexión a la base de datos MySQL
+// Crear la conexión a la base de datos usando las variables del archivo .env
 const db = mysql.createConnection({
-  host: '66.179.210.84',  // Cambia a tu host de MySQL
-  user: 'connectacrm',
-  password: 'p1osn016',
-  database: 'connectaCRM'
-});
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+  });
 
 db.connect((err) => {
   if (err) {
