@@ -1,4 +1,3 @@
-import React from 'react';
 import { MessageCircle, Instagram } from 'lucide-react';
 
 const IntegrationItem = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (

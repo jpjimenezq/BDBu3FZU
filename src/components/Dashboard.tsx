@@ -1,4 +1,3 @@
-import React from 'react';
 import StatsCard from './StatsCard';
 import IntegrationsSection from './IntegrationsSection';
 import TeamSidebar from './TeamSidebar';

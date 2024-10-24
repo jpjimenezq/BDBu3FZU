@@ -1,17 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import { LoginForm } from './components/LoginForm';
+import { RegisterForm } from './components/RegisterForm';
 import Dashboard from './components/Dashboard';
 import SalesFunnel from './components/SalesFunnel';
+import { jwtDecode } from 'jwt-decode';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState('Home');
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false); // Estado para controlar si el Sidebar está expandido
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const handleLogin = (email: string, password: string) => {
-    // Cambia este manejo según tu lógica de autenticación
-    setIsAuthenticated(true); // Asume que las credenciales son correctas si no se lanza un error
+  const getAccessToken = () => localStorage.getItem('accessToken');
+
+  useEffect(() => {
+    const token = getAccessToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          localStorage.removeItem('accessToken');
+          setIsAuthenticated(false);
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        setIsAuthenticated(false);
+      }
+    }
+  }, []);
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('accessToken', data.token);
+        setIsAuthenticated(true);
+      } else {
+        console.error('Login error:', data.message);
+      }
+    } catch (error) {
+      console.error('Error en el login:', error);
+    }
+  };
+
+  const handleRegister = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('accessToken', data.token);
+        setIsAuthenticated(true);
+      } else {
+        console.error('Register error:', data.message);
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+    }
+  };
+
+  const toggleAuthForm = () => {
+    setIsRegistering(!isRegistering);
   };
 
   const handleSelect = (iconName: string) => {
@@ -19,7 +85,7 @@ const App: React.FC = () => {
   };
 
   const handleSidebarToggle = (expanded: boolean) => {
-    setIsSidebarExpanded(expanded); // Actualizamos el estado cuando se expande el Sidebar
+    setIsSidebarExpanded(expanded);
   };
 
   const renderContent = () => {
@@ -37,17 +103,25 @@ const App: React.FC = () => {
     <div className="min-h-screen">
       {isAuthenticated ? (
         <div className="flex">
-          {/* Sidebar con los iconos */}
           <Sidebar selected={selectedIcon} onSelect={handleSelect} onExpand={handleSidebarToggle} />
-
-          {/* Contenido principal con espacio dinámico según el ancho del Sidebar */}
           <div className={`flex-1 p-8 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-16'}`}>
-            {renderContent()}
+            <Routes>
+              <Route path="/" element={renderContent()} />
+              <Route path="*" element={<Navigate to="/" />} />
+              <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/sales-funnel" element={<SalesFunnel />} />
+              </Route>
+            </Routes>
           </div>
         </div>
       ) : (
         <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-          <LoginForm onLogin={handleLogin} />
+          {isRegistering ? (
+            <RegisterForm onRegister={handleRegister} onToggleAuthForm={toggleAuthForm} />
+          ) : (
+            <LoginForm onLogin={handleLogin} onToggleAuthForm={toggleAuthForm} />
+          )}
         </div>
       )}
     </div>

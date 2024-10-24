@@ -3,10 +3,10 @@ import { Home, Filter, MessageSquare, Users, Settings, Search } from 'lucide-rea
 
 interface SidebarIconProps {
   icon: ReactElement;
-  name: string; // Prop para el nombre del ícono
+  name: string;
   active?: boolean;
   onSelect: () => void;
-  isExpanded: boolean; // Agregar esta prop para verificar si está expandido
+  isExpanded: boolean;
 }
 
 const SidebarIcon: React.FC<SidebarIconProps> = ({ icon, name, active = false, onSelect, isExpanded }) => (
@@ -14,12 +14,12 @@ const SidebarIcon: React.FC<SidebarIconProps> = ({ icon, name, active = false, o
     onClick={onSelect}
     className={`flex items-center p-3 rounded-xl hover:bg-gray-100 transition ${
       active ? 'bg-gray-100' : ''
-    } ${isExpanded ? 'justify-start' : 'justify-center'}`} // Cambiar justify según el estado
+    } ${isExpanded ? 'justify-start' : 'justify-center'}`}
   >
     {React.cloneElement(icon, {
       className: `w-5 h-5 ${active ? 'text-blue-600' : 'text-gray-500'}`
     })}
-    {isExpanded && <span className="ml-2 text-gray-600">{name}</span>} {/* Mostrar el nombre solo si está expandido */}
+    {isExpanded && <span className="ml-2 text-gray-600">{name}</span>}
   </button>
 );
 
@@ -47,12 +47,10 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Logo en la parte superior */}
       <div className="w-8 h-8 bg-blue-600 rounded-lg mb-8 flex items-center justify-center text-white font-bold mx-auto">
         L
       </div>
 
-      {/* Navegación de íconos */}
       <nav className="flex-1 flex flex-col gap-4">
         <SidebarIcon
           icon={<Home />}
@@ -91,7 +89,6 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
         />
       </nav>
 
-      {/* Ícono de búsqueda en la parte inferior */}
       <div className="mt-auto">
         <SidebarIcon
           icon={<Search />}

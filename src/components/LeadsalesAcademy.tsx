@@ -8,7 +8,7 @@ const LeadsalesAcademy: React.FC = () => {
         <p className="text-gray-600 mb-4">
           Resuelve todas tus dudas en
           <br />
-          <span className="text-blue-600 font-medium">Leadsales Academy</span>
+          <span className="text-blue-600 font-medium">ConnectaCRM Blog</span>
         </p>
         <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
           Ingresa y aprende

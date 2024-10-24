@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-interface LoginFormProps {
-  onLogin: (email: string, password: string) => void;
+interface RegisterFormProps {
+  onRegister: (email: string, password: string) => void;
   onToggleAuthForm: () => void;
 }
 
-export function LoginForm({ onLogin, onToggleAuthForm }: LoginFormProps) {
+export function RegisterForm({ onRegister, onToggleAuthForm }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (password !== confirmPassword) {
+      setErrorMessage('Las contraseñas no coinciden');
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,20 +33,20 @@ export function LoginForm({ onLogin, onToggleAuthForm }: LoginFormProps) {
       const data = await response.json();
 
       if (response.ok) {
-        onLogin(email, password);
+        onRegister(email, password);
       } else {
-        setErrorMessage(data.message || 'Credenciales incorrectas');
+        setErrorMessage(data.message || 'Error en el registro');
       }
     } catch (error) {
       setErrorMessage('Ocurrió un error en la conexión. Inténtalo de nuevo.');
-      console.error('Error en el login:', error);
+      console.error('Error en el registro:', error);
     }
   };
 
   return (
     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">Welcome</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -79,6 +85,19 @@ export function LoginForm({ onLogin, onToggleAuthForm }: LoginFormProps) {
           </div>
         </div>
 
+        <div className="space-y-2 relative">
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              required
+            />
+          </div>
+        </div>
+
         {errorMessage && (
           <p className="text-red-500 text-sm">{errorMessage}</p>
         )}
@@ -87,17 +106,17 @@ export function LoginForm({ onLogin, onToggleAuthForm }: LoginFormProps) {
           type="submit"
           className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          LOGIN
+          REGISTER
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-600">
-        Don't have an account?{' '}
+        Already have an account?{' '}
         <button
-          onClick={onToggleAuthForm} 
+          onClick={onToggleAuthForm}
           className="text-blue-500 hover:text-blue-600 font-medium"
         >
-          Sign Up
+          Log In
         </button>
       </p>
     </div>
