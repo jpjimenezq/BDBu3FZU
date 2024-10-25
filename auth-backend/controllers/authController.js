@@ -57,14 +57,14 @@ const login = (req, res) => {
                 return res.status(401).json({ message: 'Credenciales incorrectas' });
             }
 
-            const accessToken = jwt.sign({ userId: user.id }, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-            const refreshToken = jwt.sign({ userId: user.id }, REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
+            const accessToken = jwt.sign({ userId: user.email }, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+            const refreshToken = jwt.sign({ userId: user.email }, REFRESH_TOKEN_SECRET, { expiresIn: '24h' });
 
             res.status(200).json({
                 message: 'Autenticación exitosa',
                 accessToken,
                 refreshToken,
-                user: { email: user.email }
+                user: { email: email.email }
             });
         });
     });
@@ -78,7 +78,7 @@ const token = (req, res) => {
     jwt.verify(token, REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: 'Invalid or expired refresh token' });
 
-        const accessToken = jwt.sign({ userId: user.userId }, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign({ userId: user.userId }, ACCESS_TOKEN_SECRET, { expiresIn: '1440m' });
         res.json({ accessToken });
     });
 };

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+
+
 
 interface NewLeadProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (lead: { name: string; contact: string; social: string }) => void;
+  userId: string;
 }
 
 const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
@@ -14,14 +18,40 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
 
   if (!isOpen) return null;
 
+  // Luego, en tu función:
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('refreshToken');
+    if (!token) return null;
+
+    try {
+      const decodedToken = jwtDecode<NewLeadProps>(token); // Usamos CustomJwtPayload como el tipo
+      return decodedToken.userId;
+    } catch (error) {
+      console.error('Error decodificando el token:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault(); // Evitar que el formulario recargue la página
+
+    // Validación de campos vacíos
+    if (!name || !contact || !social) {
+      setErrorMessage('Por favor, completa todos los campos.');
+      return;
+    }
+
+    const userId = getUserIdFromToken(); // Extraer el userId del token
+    if (!userId) {
+      setErrorMessage('Error: Usuario no identificado.');
+      return;
+    }
 
     const lead = {
       nombre: name,
       contacto: contact,
       redSocial: social,
-      usuario: 'usuario@example.com', // Cambia esto para enviar el usuario correcto
+      usuario: userId, // Usar el userId obtenido del token decodificado
     };
 
     try {
@@ -29,13 +59,12 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envía el token de autenticación
+          Authorization: `Bearer ${localStorage.getItem('refreshToken')}`, // Envía el token de autenticación
         },
         body: JSON.stringify(lead),
       });
 
       if (response.ok) {
-        // Mapea las propiedades antes de enviarlas a la función onSave
         onSave({ name: lead.nombre, contact: lead.contacto, social: lead.redSocial }); // Mapea las propiedades
         onClose(); // Cierra el modal después de guardar
       } else {
@@ -55,7 +84,7 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">Nombre</label>
-            <input 
+            <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -65,7 +94,7 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Contacto</label>
-            <input 
+            <input
               type="text"
               value={contact}
               onChange={(e) => setContact(e.target.value)}
@@ -75,7 +104,7 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Red Social</label>
-            <input 
+            <input
               type="text"
               value={social}
               onChange={(e) => setSocial(e.target.value)}
@@ -84,15 +113,15 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
             />
           </div>
           <div className="flex justify-end space-x-4">
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
               onClick={onClose}
             >
               Cancelar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Guardar

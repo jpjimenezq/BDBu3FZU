@@ -29,6 +29,7 @@ export function LoginForm({ onLogin, onToggleAuthForm }: LoginFormProps) {
       if (response.ok) {
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('user',email);
         onLogin(email, password);
       } else {
         setErrorMessage(data.message || 'Credenciales incorrectas');
