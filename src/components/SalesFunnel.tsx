@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Star, MessageCircle, CheckCircle } from 'lucide-react';
-import NewLead from './NewLead'; // Importa el componente modal
+import NewLead from './NewLead';
 
 interface Lead {
-  idlead: string; // Asegúrate de tener el idlead en el objeto Lead
+  idlead: string;
   name: string;
   contact: string;
   social: string;
@@ -86,7 +86,7 @@ const SalesFunnel: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           const formattedLeads = data.map((lead: any) => ({
-            idlead: lead.idlead, // Asegúrate de que el idlead esté disponible
+            idlead: lead.idlead,
             name: lead.nombre,
             contact: lead.contacto,
             social: lead.red_social,
@@ -109,29 +109,26 @@ const SalesFunnel: React.FC = () => {
   }, [userEmail]);
 
   const moveLead = async (lead: Lead, target: string) => {
-    // Define el nuevo estado basado en el destino
-    let newStatus = -1; // Estado no válido
+    let newStatus = -1;
     switch (target) {
       case "Prospectos":
-        newStatus = 1; // Define el código para Prospectos
+        newStatus = 1;
         break;
       case "Asignados":
-        newStatus = 2; // Define el código para Asignados
+        newStatus = 2;
         break;
       case "Contactados":
-        newStatus = 3; // Define el código para Contactados
+        newStatus = 3;
         break;
       case "Cierre":
-        newStatus = 4; // Define el código para Cierre
+        newStatus = 4;
         break;
       default:
         break;
     }
 
     if (newStatus !== -1) {
-      console.log(newStatus);
       try {
-        // Realiza la solicitud para mover el lead
         const response = await fetch('http://localhost:5000/moveLead', {
           method: 'POST',
           headers: {
@@ -139,7 +136,7 @@ const SalesFunnel: React.FC = () => {
             Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
           },
           body: JSON.stringify({
-            idlead: lead.idlead, // Asegúrate de tener esta propiedad en el objeto lead
+            idlead: lead.idlead,
             estatus: newStatus,
           }),
         });
@@ -148,13 +145,11 @@ const SalesFunnel: React.FC = () => {
           throw new Error('Error al mover el lead');
         }
 
-        // Si la actualización fue exitosa, elimina el lead de las listas existentes
         setProspects((prev) => prev.filter(l => l.idlead !== lead.idlead));
         setAssigned((prev) => prev.filter(l => l.idlead !== lead.idlead));
         setContacted((prev) => prev.filter(l => l.idlead !== lead.idlead));
         setClosed((prev) => prev.filter(l => l.idlead !== lead.idlead));
 
-        // Añade el lead a la lista de destino
         switch (target) {
           case "Prospectos":
             setProspects((prev) => [...prev, lead]);
@@ -182,7 +177,7 @@ const SalesFunnel: React.FC = () => {
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // Necesario para permitir el drop
+    e.preventDefault();
   };
 
   return (
@@ -252,7 +247,9 @@ const SalesFunnel: React.FC = () => {
         />
       </div>
 
-      {isModalOpen && <NewLead onClose={closeModal} onSave={handleSaveLead} />}
+      {isModalOpen && (
+        <NewLead isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveLead} />
+      )}
     </div>
   );
 };

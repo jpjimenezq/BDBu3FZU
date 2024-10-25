@@ -7,7 +7,7 @@ exports.addLead = (req, res) => {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    const query = 'INSERT INTO leads (nombre, contacto, red_social, usuario) VALUES (?, ?, ?, ?)';
+    const query = 'INSERT INTO leads (nombre, contacto, red_social, usuario, estatus) VALUES (?, ?, ?, ?, 1)';
     db.query(query, [nombre, contacto, redSocial, usuario], (err, result) => {
         if (err) {
             return res.status(500).json({ message: 'Error en el servidor' });
@@ -28,7 +28,6 @@ exports.getLeadsByUser = (req, res) => {
 
     db.query(query, [userEmail], (err, results) => {
         if (err) {
-            console.error('Database error:', err);
             return res.status(500).json({ message: 'Error en el servidor' });
         }
 
@@ -47,11 +46,9 @@ exports.updateLead = (req, res) => {
     
     // Sustituir las variables en la consulta
     const queryWithValues = db.format(query, [estatus, idlead]);
-    console.log('Consulta SQL:', queryWithValues); // Imprime la consulta con los valores
 
     db.query(query, [estatus, idlead], (err, result) => {
         if (err) {
-            console.error('Database error:', err);
             return res.status(500).json({ message: 'Error en el servidor' });
         }
 

@@ -7,6 +7,9 @@ interface NewLeadProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (lead: { name: string; contact: string; social: string }) => void;
+}
+
+interface newlead {
   userId: string;
 }
 
@@ -24,7 +27,7 @@ const NewLead: React.FC<NewLeadProps> = ({ isOpen, onClose, onSave }) => {
     if (!token) return null;
 
     try {
-      const decodedToken = jwtDecode<NewLeadProps>(token); // Usamos CustomJwtPayload como el tipo
+      const decodedToken = jwtDecode<newlead>(token); // Usamos CustomJwtPayload como el tipo
       return decodedToken.userId;
     } catch (error) {
       console.error('Error decodificando el token:', error);
