@@ -23,8 +23,16 @@ const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads, on
     className="flex-1 min-w-[200px] bg-gray-50 p-2 rounded-lg"
     onDragOver={onDragOver}
     onDrop={(e) => {
-      const lead = JSON.parse(e.dataTransfer.getData("lead")) as Lead;
-      onDropLead(lead, title);
+      e.preventDefault();
+      const leadData = e.dataTransfer.getData("lead");
+      if (leadData) {
+        try {
+          const lead = JSON.parse(leadData) as Lead;
+          onDropLead(lead, title);
+        } catch (error) {
+          console.error('Error parsing lead data:', error);
+        }
+      }
     }}
   >
     <div className="border-b-2 border-blue-600 pb-2 mb-4">
@@ -74,11 +82,17 @@ const SalesFunnel: React.FC = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
+        const token = localStorage.getItem('refreshToken');
+        if (!token) {
+          console.error('Token de autenticación no encontrado');
+          return;
+        }
+        
         const response = await fetch(`http://localhost:5000/lead`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ userEmail })
         });
@@ -90,8 +104,12 @@ const SalesFunnel: React.FC = () => {
             name: lead.nombre,
             contact: lead.contacto,
             social: lead.red_social,
+            estatus: lead.estatus,
           }));
-          setProspects(formattedLeads);
+          setProspects(formattedLeads.filter(lead => Number(lead.estatus) === 1));
+          setAssigned(formattedLeads.filter(lead => Number(lead.estatus) === 2));
+          setContacted(formattedLeads.filter(lead => Number(lead.estatus) === 3));
+          setClosed(formattedLeads.filter(lead => Number(lead.estatus) === 4));          
         } else {
           const data = await response.json();
           console.error('Error fetching leads:', data.message || 'Error al obtener los leads');
@@ -215,41 +233,39 @@ const SalesFunnel: React.FC = () => {
       <div className="flex gap-6 overflow-x-auto pb-4">
         <FunnelStage 
           title="Prospectos" 
-          count={prospects.length}
-          icon={<Star className="w-4 h-4" />}
-          leads={prospects}
-          onDropLead={handleDropLead}
-          onDragOver={handleDragOver}
+          count={prospects.length} 
+          icon={<Star className="text-yellow-500" />} 
+          leads={prospects} 
+          onDropLead={handleDropLead} 
+          onDragOver={handleDragOver} 
         />
         <FunnelStage 
           title="Asignados" 
-          count={assigned.length}
-          icon={<MessageCircle className="w-4 h-4" />}
-          leads={assigned}
-          onDropLead={handleDropLead}
-          onDragOver={handleDragOver}
+          count={assigned.length} 
+          icon={<CheckCircle className="text-green-500" />} 
+          leads={assigned} 
+          onDropLead={handleDropLead} 
+          onDragOver={handleDragOver} 
         />
         <FunnelStage 
           title="Contactados" 
-          count={contacted.length}
-          icon={<MessageCircle className="w-4 h-4" />}
-          leads={contacted}
-          onDropLead={handleDropLead}
-          onDragOver={handleDragOver}
+          count={contacted.length} 
+          icon={<MessageCircle className="text-blue-500" />} 
+          leads={contacted} 
+          onDropLead={handleDropLead} 
+          onDragOver={handleDragOver} 
         />
         <FunnelStage 
           title="Cierre" 
-          count={closed.length}
-          icon={<CheckCircle className="w-4 h-4" />}
-          leads={closed}
-          onDropLead={handleDropLead}
-          onDragOver={handleDragOver}
+          count={closed.length} 
+          icon={<CheckCircle className="text-green-500" />} 
+          leads={closed} 
+          onDropLead={handleDropLead} 
+          onDragOver={handleDragOver} 
         />
       </div>
 
-      {isModalOpen && (
-        <NewLead isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveLead} />
-      )}
+      <NewLead isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveLead} />
     </div>
   );
 };

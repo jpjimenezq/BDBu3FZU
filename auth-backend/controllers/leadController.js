@@ -24,7 +24,7 @@ exports.getLeadsByUser = (req, res) => {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
-    const query = 'SELECT idlead, nombre, contacto, red_social FROM leads WHERE usuario = ?';
+    const query = 'SELECT idlead, nombre, contacto, red_social, estatus FROM leads WHERE usuario = ?';
 
     db.query(query, [userEmail], (err, results) => {
         if (err) {
