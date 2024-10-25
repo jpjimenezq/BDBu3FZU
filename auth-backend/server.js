@@ -27,6 +27,8 @@ app.post('/login', authController.login);
 app.post('/token', authController.token);
 app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
 app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
+app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUser);
+app.post('/moveLead',leadController.updateLead);
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });

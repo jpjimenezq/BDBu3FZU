@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Brain, Star, MessageCircle, CheckCircle } from 'lucide-react';
 import NewLead from './NewLead'; // Importa el componente modal
+
+interface Lead {
+  idlead: string; // Asegúrate de tener el idlead en el objeto Lead
+  name: string;
+  contact: string;
+  social: string;
+}
 
 interface FunnelStageProps {
   title: string;
   count: number;
   icon: React.ReactNode;
-  leads: Array<{ name: string; contact: string; social: string }>;
+  leads: Lead[];
+  onDropLead: (lead: Lead, target: string) => void;
+  onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads }) => (
-  <div className="flex-1 min-w-[200px]">
+const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads, onDropLead, onDragOver }) => (
+  <div
+    className="flex-1 min-w-[200px] bg-gray-50 p-2 rounded-lg"
+    onDragOver={onDragOver}
+    onDrop={(e) => {
+      const lead = JSON.parse(e.dataTransfer.getData("lead")) as Lead;
+      onDropLead(lead, title);
+    }}
+  >
     <div className="border-b-2 border-blue-600 pb-2 mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-600">
@@ -24,7 +40,12 @@ const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads }) 
     </div>
     <div className="min-h-[400px] space-y-2">
       {leads.map((lead, index) => (
-        <div key={index} className="border p-2 rounded">
+        <div
+          key={index}
+          className="border p-2 rounded cursor-pointer"
+          draggable
+          onDragStart={(e) => e.dataTransfer.setData("lead", JSON.stringify(lead))}
+        >
           <p className="font-semibold">{lead.name}</p>
           <p className="text-sm text-gray-500">{lead.contact}</p>
           <p className="text-sm text-gray-500">{lead.social}</p>
@@ -36,13 +57,132 @@ const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads }) 
 
 const SalesFunnel: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [prospects, setProspects] = useState<Array<{ name: string; contact: string; social: string }>>([]);
+  const [prospects, setProspects] = useState<Lead[]>([]);
+  const [assigned, setAssigned] = useState<Lead[]>([]);
+  const [contacted, setContacted] = useState<Lead[]>([]);
+  const [closed, setClosed] = useState<Lead[]>([]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleSaveLead = (lead: { name: string; contact: string; social: string }) => {
-    setProspects([...prospects, lead]); // Agregar el nuevo lead a la lista de prospectos
+  const handleSaveLead = (lead: Lead) => {
+    setProspects((prev) => [...prev, lead]);
+  };
+
+  const userEmail = localStorage.getItem('user');
+
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/lead`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+          },
+          body: JSON.stringify({ userEmail })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const formattedLeads = data.map((lead: any) => ({
+            idlead: lead.idlead, // Asegúrate de que el idlead esté disponible
+            name: lead.nombre,
+            contact: lead.contacto,
+            social: lead.red_social,
+          }));
+          setProspects(formattedLeads);
+        } else {
+          const data = await response.json();
+          console.error('Error fetching leads:', data.message || 'Error al obtener los leads');
+        }
+      } catch (error) {
+        console.error('Error de conexión con el servidor:', error);
+      }
+    };
+
+    if (userEmail) {
+      fetchLeads();
+    } else {
+      console.error('No se encontró el email del usuario en localStorage.');
+    }
+  }, [userEmail]);
+
+  const moveLead = async (lead: Lead, target: string) => {
+    // Define el nuevo estado basado en el destino
+    let newStatus = -1; // Estado no válido
+    switch (target) {
+      case "Prospectos":
+        newStatus = 1; // Define el código para Prospectos
+        break;
+      case "Asignados":
+        newStatus = 2; // Define el código para Asignados
+        break;
+      case "Contactados":
+        newStatus = 3; // Define el código para Contactados
+        break;
+      case "Cierre":
+        newStatus = 4; // Define el código para Cierre
+        break;
+      default:
+        break;
+    }
+
+    if (newStatus !== -1) {
+      console.log(newStatus);
+      try {
+        // Realiza la solicitud para mover el lead
+        const response = await fetch('http://localhost:5000/moveLead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+          },
+          body: JSON.stringify({
+            idlead: lead.idlead, // Asegúrate de tener esta propiedad en el objeto lead
+            estatus: newStatus,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al mover el lead');
+        }
+
+        // Si la actualización fue exitosa, elimina el lead de las listas existentes
+        setProspects((prev) => prev.filter(l => l.idlead !== lead.idlead));
+        setAssigned((prev) => prev.filter(l => l.idlead !== lead.idlead));
+        setContacted((prev) => prev.filter(l => l.idlead !== lead.idlead));
+        setClosed((prev) => prev.filter(l => l.idlead !== lead.idlead));
+
+        // Añade el lead a la lista de destino
+        switch (target) {
+          case "Prospectos":
+            setProspects((prev) => [...prev, lead]);
+            break;
+          case "Asignados":
+            setAssigned((prev) => [...prev, lead]);
+            break;
+          case "Contactados":
+            setContacted((prev) => [...prev, lead]);
+            break;
+          case "Cierre":
+            setClosed((prev) => [...prev, lead]);
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        console.error('Error al mover el lead:', error);
+      }
+    }
+  };
+
+  const handleDropLead = (lead: Lead, target: string) => {
+    moveLead(lead, target);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Necesario para permitir el drop
   };
 
   return (
@@ -68,7 +208,6 @@ const SalesFunnel: React.FC = () => {
         Descripción del embudo
       </div>
 
-      {/* Botón "Agregar nuevo lead" */}
       <div className="mb-8">
         <button 
           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
@@ -84,30 +223,36 @@ const SalesFunnel: React.FC = () => {
           count={prospects.length}
           icon={<Star className="w-4 h-4" />}
           leads={prospects}
+          onDropLead={handleDropLead}
+          onDragOver={handleDragOver}
         />
-        {/* Otras etapas */}
         <FunnelStage 
           title="Asignados" 
-          count={0}
+          count={assigned.length}
           icon={<MessageCircle className="w-4 h-4" />}
-          leads={[]}
+          leads={assigned}
+          onDropLead={handleDropLead}
+          onDragOver={handleDragOver}
         />
         <FunnelStage 
           title="Contactados" 
-          count={0}
+          count={contacted.length}
           icon={<MessageCircle className="w-4 h-4" />}
-          leads={[]}
+          leads={contacted}
+          onDropLead={handleDropLead}
+          onDragOver={handleDragOver}
         />
         <FunnelStage 
           title="Cierre" 
-          count={0}
+          count={closed.length}
           icon={<CheckCircle className="w-4 h-4" />}
-          leads={[]}
+          leads={closed}
+          onDropLead={handleDropLead}
+          onDragOver={handleDragOver}
         />
       </div>
 
-      {/* Modal para agregar nuevo lead */}
-      <NewLead isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveLead} />
+      {isModalOpen && <NewLead onClose={closeModal} onSave={handleSaveLead} />}
     </div>
   );
 };
