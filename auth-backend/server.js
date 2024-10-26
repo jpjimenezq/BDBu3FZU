@@ -13,13 +13,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-db.connect((err) => {
+/*db.connect((err) => {
     if (err) {
         console.error('Error connecting to the database:', err);
     } else {
         console.log('Connected to MySQL database');
     }
-});
+});*/
 
 // Rutas
 app.post('/register', authController.register);

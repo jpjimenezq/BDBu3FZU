@@ -1,6 +1,6 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise'); // Importa la versión de promesas de mysql2
 
-const db = mysql.createConnection({
+const db = mysql.createPool({ // Usa createPool para manejar las conexiones automáticamente
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
