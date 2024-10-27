@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import TrustSection from './components/TrustSection';
 import SuccessStories from './components/SuccessStories';
-import ForbesSection from './components/ForbesSection';
+import AboutUsSection from './components/AboutUsSection';
 import BenefitsSection from './components/BenefitsSection';
 import CentralizeSection from './components/CentralizeSection';
 import TourSection from './components/TourSection';
@@ -28,7 +28,7 @@ function App() {
       <Hero />
       <TrustSection />
       <SuccessStories />
-      <ForbesSection ref={aboutUsRef} />
+      <AboutUsSection ref={aboutUsRef} />
       <BenefitsSection />
       <CentralizeSection />
       <TourSection />
