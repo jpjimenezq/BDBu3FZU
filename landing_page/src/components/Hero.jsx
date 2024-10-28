@@ -9,7 +9,7 @@ function Hero() {
             CRM para WhatsApp, Facebook e Instagram
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Ayudamos a tu negocio a organizar las conversaciones en WhatsApp, Facebook e Instagram en un solo lugar para que tripliques tus ventas en 90 días 🚀
+            Conecta todos servicios de mensajería más populares para tener un mejor manejo de tus leads y aumentar tus ventas en muy poco tiempo 🚀
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button className="px-8 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors">

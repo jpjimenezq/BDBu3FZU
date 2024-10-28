@@ -18,25 +18,25 @@ const PricingSection = forwardRef((props, ref) => (
               PRUÉBALO
             </span>
           </div>
-          <h3 className="text-xl font-bold mb-2">PERIODO SETUP</h3>
+          <h3 className="text-xl font-bold mb-2">FREE SETUP</h3>
           <div className="mb-4">
-            <span className="text-5xl font-bold">$7</span>
-            <span className="text-gray-600 ml-2">USD</span>
+            <span className="text-5xl font-bold">GRATIS</span>
+            <span className="text-gray-600 ml-2"> </span>
           </div>
-          <p className="text-gray-600 mb-6">por 14 días, y luego $83.99 USD mensual</p>
+          <p className="text-gray-600 mb-6">De por vida</p>
           
           <button className="w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition-colors mb-6">
-            REGÍSTRATE Y CONTRATA
+            REGÍSTRATE Y PRUEBALO
           </button>
 
           <ul className="space-y-3">
             {[
-              '3 usuarios',
-              'Mensajes ilimitados',
+              '1 usuario',
+              '100 mensajes diarios',
               'Embudos ilimitados',
               'Integración WhatsApp',
               'Integración Facebook Messenger e Instagram',
-              'Leadbot con Marca de Agua',
+              'Chats con Marca de Agua',
               'Acceso a ConectaCRM Academy'
             ].map((feature, index) => (
               <li key={index} className="flex items-center">
@@ -53,7 +53,7 @@ const PricingSection = forwardRef((props, ref) => (
         <div className="border-2 border-indigo-200 rounded-lg p-8">
           <h3 className="text-xl font-bold mb-2">PLAN MENSUAL</h3>
           <div className="mb-4">
-            <span className="text-5xl font-bold">$83.99</span>
+            <span className="text-5xl font-bold">$4.99</span>
             <span className="text-gray-600 ml-2">USD</span>
           </div>
           <p className="text-gray-600 mb-6">Suscripción mensual</p>
@@ -69,7 +69,7 @@ const PricingSection = forwardRef((props, ref) => (
               'Embudos ilimitados',
               'Integración WhatsApp',
               'Integración Facebook Messenger e Instagram',
-              'Leadbot con Marca de Agua',
+              'Leadbot sin Marca de Agua',
               'Acceso a ConectaCRM Academy',
               'Soporte por Chat'
             ].map((feature, index) => (
