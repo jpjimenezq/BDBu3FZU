@@ -1,5 +1,6 @@
 import React, { ReactElement, useState } from 'react';
-import { Home, Filter, MessageSquare, Users, Settings, Search } from 'lucide-react';
+import { Home, Filter, MessageSquare, Users, Settings, Search, 
+  CalendarCheck, Contact2 } from 'lucide-react';
 
 interface SidebarIconProps {
   icon: ReactElement;
@@ -71,6 +72,20 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
           name="Mensajes"
           active={selected === 'MessageSquare'}
           onSelect={() => onSelect('MessageSquare')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<CalendarCheck />}
+          name="Calendar"
+          active={selected === 'CalendarCheck'}
+          onSelect={() => onSelect('CalendarCheck')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<Contact2 />}
+          name="LeadsManager"
+          active={selected === 'Contact2'}
+          onSelect={() => onSelect('Contact2')}
           isExpanded={isExpanded}
         />
         <SidebarIcon

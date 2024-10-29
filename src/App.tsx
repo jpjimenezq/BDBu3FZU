@@ -8,6 +8,8 @@ import { jwtDecode } from 'jwt-decode';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import ChatDashboard from './components/chat/ChatDashboard';
+import Agenda from './components/Calendar/Agenda';
+import LeadsDashboard from './components/LeadsManager/LeadsDashboard'
 
 
 const App: React.FC = () => {
@@ -98,6 +100,10 @@ const App: React.FC = () => {
         return <SalesFunnel />;
       case 'MessageSquare':
         return <ChatDashboard />;
+      case 'CalendarCheck':
+        return <Agenda />;
+      case 'Contact2':
+        return <LeadsDashboard />;
       default:
         return null;
     }
