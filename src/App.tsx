@@ -7,6 +7,8 @@ import SalesFunnel from './components/SalesFunnel';
 import { jwtDecode } from 'jwt-decode';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import ChatDashboard from './components/chat/ChatDashboard';
+
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -94,6 +96,8 @@ const App: React.FC = () => {
         return <Dashboard />;
       case 'Filter':
         return <SalesFunnel />;
+      case 'MessageSquare':
+        return <ChatDashboard />;
       default:
         return null;
     }

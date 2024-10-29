@@ -69,7 +69,7 @@ const PricingSection = forwardRef((props, ref) => (
               'Embudos ilimitados',
               'Integración WhatsApp',
               'Integración Facebook Messenger e Instagram',
-              'Leadbot sin Marca de Agua',
+              'Chats sin Marca de Agua',
               'Acceso a ConectaCRM Academy',
               'Soporte por Chat'
             ].map((feature, index) => (
