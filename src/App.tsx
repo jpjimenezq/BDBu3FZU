@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import { LoginForm } from './components/LoginForm';
 import { RegisterForm } from './components/RegisterForm';
@@ -9,9 +9,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import ChatDashboard from './components/Chat/ChatDashboard';
 import Agenda from './components/Calendar/Agenda';
-import LeadsDashboard from './components/LeadsManager/LeadsDashboard'
+import LeadsDashboard from './components/LeadsManager/LeadsDashboard';
 import BotConfigSection from './components/Bots/BotConfig';
-
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,25 +18,31 @@ const App: React.FC = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const getAccessToken = () => localStorage.getItem('accessToken');
+  const getRefreshToken = () => localStorage.getItem('refreshToken');
 
-  useEffect(() => {
-    const token = getAccessToken();
+  const verifyToken = useCallback(() => {
+    const token = getRefreshToken();
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
-        if (decodedToken.exp * 1000 < Date.now()) {
-          localStorage.removeItem('accessToken');
-          setIsAuthenticated(false);
-        } else {
+        if (decodedToken.exp * 1000 > Date.now()) {
           setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem('refreshToken');
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error('Error decoding token:', error);
         setIsAuthenticated(false);
       }
+    } else {
+      setIsAuthenticated(false);
     }
   }, []);
+
+  useEffect(() => {
+    verifyToken();
+  }, [verifyToken]);
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -50,10 +55,10 @@ const App: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('accessToken', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
         setIsAuthenticated(true);
       } else {
-        console.error('Login error:', data.message);
+        console.error('Error en login:', data.message);
       }
     } catch (error) {
       console.error('Error en el login:', error);
@@ -106,7 +111,7 @@ const App: React.FC = () => {
       case 'Contact2':
         return <LeadsDashboard />;
       case 'BotMessageSquare':
-        return <BotConfigSection />
+        return <BotConfigSection />;
       default:
         return null;
     }
