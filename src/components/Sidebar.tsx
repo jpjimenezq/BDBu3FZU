@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { Home, Filter, MessageSquare, Users, Settings, Search, 
-  CalendarCheck, Contact2 } from 'lucide-react';
+  CalendarCheck, Contact2, BotMessageSquare } from 'lucide-react';
 
 interface SidebarIconProps {
   icon: ReactElement;
@@ -86,6 +86,13 @@ const Sidebar: React.FC<SidebarProps> = ({ selected, onSelect }) => {
           name="LeadsManager"
           active={selected === 'Contact2'}
           onSelect={() => onSelect('Contact2')}
+          isExpanded={isExpanded}
+        />
+        <SidebarIcon
+          icon={<BotMessageSquare />}
+          name="BotMessage"
+          active={selected === 'BotMessageSquare'}
+          onSelect={() => onSelect('BotMessageSquare')}
           isExpanded={isExpanded}
         />
         <SidebarIcon
