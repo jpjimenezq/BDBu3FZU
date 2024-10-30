@@ -11,6 +11,7 @@ import ChatDashboard from './components/Chat/ChatDashboard';
 import Agenda from './components/Calendar/Agenda';
 import LeadsDashboard from './components/LeadsManager/LeadsDashboard';
 import BotConfigSection from './components/Bots/BotConfig';
+import Settings from './components/Settings/Settings';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -112,6 +113,8 @@ const App: React.FC = () => {
         return <LeadsDashboard />;
       case 'BotMessageSquare':
         return <BotConfigSection />;
+      case 'Settings':
+        return <Settings />;
       default:
         return null;
     }
