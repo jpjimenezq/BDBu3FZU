@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import { LoginForm } from './components/LoginForm';
 import { RegisterForm } from './components/RegisterForm';
 import Dashboard from './components/Dashboard';
-import SalesFunnel from './components/SalesFunnel';
+import SalesFunnel from './components/SalesFunnel/SalesFunnel';
 import { jwtDecode } from 'jwt-decode';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';

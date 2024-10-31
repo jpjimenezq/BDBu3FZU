@@ -9,6 +9,14 @@ interface Lead {
   social: string;
 }
 
+interface LeadEditProps {
+  lead: Lead | null;
+  isOpen: boolean;                    // Propiedad requerida
+  onClose: () => void;
+  onSave: (updatedLead: Lead) => void;
+  onDelete: (idlead: string) => void;
+}
+
 interface FunnelStageProps {
   title: string;
   count: number;
