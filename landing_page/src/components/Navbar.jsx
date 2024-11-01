@@ -7,7 +7,7 @@ function Navbar({ onPricingClick, onAboutUsClick}) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
-            <p className='font-bold text-indigo-600'>SocialLink CRM</p>
+            <p className='font-bold text-indigo-600'>ConnectaCRM</p>
           </div>
           
           <div className="hidden md:flex md:items-center md:space-x-8">
