@@ -53,7 +53,7 @@ const PricingSection = forwardRef((props, ref) => (
         <div className="border-2 border-indigo-200 rounded-lg p-8">
           <h3 className="text-xl font-bold mb-2">PLAN MENSUAL</h3>
           <div className="mb-4">
-            <span className="text-5xl font-bold">$4.99</span>
+            <span className="text-5xl font-bold">$9.99</span>
             <span className="text-gray-600 ml-2">USD</span>
           </div>
           <p className="text-gray-600 mb-6">Suscripción mensual</p>
