@@ -9,14 +9,14 @@ const register = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const [existingUser] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [existingUser] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
 
         if (existingUser.length > 0) {
             return res.status(400).json({ message: 'El usuario ya existe' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query('INSERT INTO users (email, password) VALUES (?, ?)', [email, hashedPassword]);
+        await db.query('INSERT INTO usuarios (email, password) VALUES (?, ?)', [email, hashedPassword]);
 
         res.status(201).json({ message: 'Usuario registrado con éxito' });
     } catch (error) {
@@ -29,7 +29,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const [results] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [results] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
 
         if (results.length === 0) {
             return res.status(401).json({ message: 'Credenciales incorrectas' });
