@@ -22,44 +22,55 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false, onClic
   </button>
 );
 
-const Navigation: React.FC = () => {
+interface NavigationProps {
+  onNavClick: (section: string) => void;
+  activeSection: string;
+}
+
+const Navigation: React.FC<NavigationProps> = ({ onNavClick, activeSection }) => {
   return (
     <div className="flex items-center border-b border-gray-200 overflow-x-auto">
       <NavItem
         icon={<User className="w-4 h-4" />}
         label="Perfil"
-        isActive={true}
-        onClick={() => console.log('Perfil clicked')}
+        isActive={activeSection === 'Perfil'}
+        onClick={() => onNavClick('Perfil')}
       />
       <NavItem
         icon={<Shield className="w-4 h-4" />}
         label="Seguridad"
-        onClick={() => console.log('Seguridad clicked')}
+        isActive={activeSection === 'Seguridad'}
+        onClick={() => onNavClick('Seguridad')}
       />
       <NavItem
         icon={<CreditCard className="w-4 h-4" />}
         label="Suscripción"
-        onClick={() => console.log('Suscripción clicked')}
+        isActive={activeSection === 'Suscripción'}
+        onClick={() => onNavClick('Suscripción')}
       />
       <NavItem
         icon={<Database className="w-4 h-4" />}
         label="Almacenamiento"
-        onClick={() => console.log('Almacenamiento clicked')}
+        isActive={activeSection === 'Almacenamiento'}
+        onClick={() => onNavClick('Almacenamiento')}
       />
       <NavItem
         icon={<Briefcase className="w-4 h-4" />}
         label="Workspace"
-        onClick={() => console.log('Workspace clicked')}
+        isActive={activeSection === 'Workspace'}
+        onClick={() => onNavClick('Workspace')}
       />
       <NavItem
         icon={<Building2 className="w-4 h-4" />}
         label="Facturación"
-        onClick={() => console.log('Facturación clicked')}
+        isActive={activeSection === 'Facturación'}
+        onClick={() => onNavClick('Facturación')}
       />
       <NavItem
         icon={<Users className="w-4 h-4" />}
         label="Equipo"
-        onClick={() => console.log('Equipo clicked')}
+        isActive={activeSection === 'Equipo'}
+        onClick={() => onNavClick('Equipo')}
       />
     </div>
   );
