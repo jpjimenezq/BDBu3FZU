@@ -4,6 +4,10 @@ import Navigation from './Navigation';
 import ProfileForm from './ProfileForm';
 import ProfilePass from './ProfilePass';
 import Suscription from './Suscription';
+import Storage from './StorageForm';
+import WorkSpace from './Workspace/WorkspaceForm';
+import Factura from './Factura/BillingForm';
+import Teams from './Teams/TeamForm';
 
 const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState('Perfil');
@@ -22,6 +26,10 @@ const Settings: React.FC = () => {
             {activeSection === 'Perfil' && <ProfileForm />}
             {activeSection === 'Seguridad' && <ProfilePass />}
             {activeSection === 'Suscripcion' && <Suscription />}
+            {activeSection === 'Almacenamiento' && <Storage />}
+            {activeSection === 'Workspace' && <WorkSpace />}
+            {activeSection === 'Facturacion' && <Factura />}
+            {activeSection === 'Equipo' && <Teams />}
             {/* Agrega otros componentes correspondientes aquí */}
           </div>
         </div>
