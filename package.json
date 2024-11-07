@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@mercadopago/sdk-react": "^0.0.19",
+    "@paypal/react-paypal-js": "^8.7.0",
+    "axios": "^1.7.7",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.344.0",
