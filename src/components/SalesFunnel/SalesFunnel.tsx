@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Star, MessageCircle, CheckCircle } from 'lucide-react';
 import NewLead from './NewLead';
+import LeadEdit from './LeadEdit';
 
 interface Lead {
   idlead: string;
@@ -24,9 +25,11 @@ interface FunnelStageProps {
   leads: Lead[];
   onDropLead: (lead: Lead, target: string) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
+  onEdit: (lead: Lead) => void;
+  onDelete: (idlead: string) => void;
 }
 
-const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads, onDropLead, onDragOver }) => (
+const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads, onDropLead, onDragOver, onEdit, onDelete }) => (
   <div
     className="flex-1 min-w-[200px] bg-gray-50 p-2 rounded-lg"
     onDragOver={onDragOver}
@@ -65,6 +68,21 @@ const FunnelStage: React.FC<FunnelStageProps> = ({ title, count, icon, leads, on
           <p className="font-semibold">{lead.name}</p>
           <p className="text-sm text-gray-500">{lead.contact}</p>
           <p className="text-sm text-gray-500">{lead.social}</p>
+
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => onEdit(lead)}  // Llamamos a la función de edición
+              className="text-blue-600 hover:underline"
+            >
+              Editar
+            </button>
+            <button
+              onClick={() => onDelete(lead.idlead)}  // Llamamos a la función de eliminación
+              className="text-red-600 hover:underline"
+            >
+              Eliminar
+            </button>
+          </div>
         </div>
       ))}
     </div>
@@ -77,11 +95,14 @@ const SalesFunnel: React.FC = () => {
   const [assigned, setAssigned] = useState<Lead[]>([]);
   const [contacted, setContacted] = useState<Lead[]>([]);
   const [closed, setClosed] = useState<Lead[]>([]);
+  const [leadToEdit, setLeadToEdit] = useState<Lead | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleSaveLead = (lead: Lead) => {
+    console.log("Guardando nuevo lead:", lead);
     setProspects((prev) => [...prev, lead]);
   };
 
@@ -206,6 +227,38 @@ const SalesFunnel: React.FC = () => {
     e.preventDefault();
   };
 
+  const handleEditLead = (lead: Lead) => {
+    console.log('Editando lead:', lead);
+    setLeadToEdit(lead);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteLead = async (idlead: string) => {
+    console.log("Eliminando lead en SalesFunnel con ID:", idlead); //
+    try {
+      const response = await fetch(`http://localhost:5000/leads/${idlead}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        console.log(`Lead con ID ${idlead} eliminado con éxito`);
+        setProspects((prev) => prev.filter(lead => lead.idlead !== idlead));
+        setAssigned((prev) => prev.filter(lead => lead.idlead !== idlead));
+        setContacted((prev) => prev.filter(lead => lead.idlead !== idlead));
+        setClosed((prev) => prev.filter(lead => lead.idlead !== idlead));
+      } else {
+        const data = await response.json();
+        console.error('Error al eliminar el lead:', data.message);
+      }
+    } catch (error) {
+      console.error('Error de conexión al eliminar el lead:', error);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex justify-between items-center mb-6">
@@ -245,7 +298,9 @@ const SalesFunnel: React.FC = () => {
           icon={<Star className="text-yellow-500" />} 
           leads={prospects} 
           onDropLead={handleDropLead} 
-          onDragOver={handleDragOver} 
+          onDragOver={handleDragOver}
+          onEdit={handleEditLead}
+          onDelete={handleDeleteLead}
         />
         <FunnelStage 
           title="Asignados" 
@@ -254,6 +309,8 @@ const SalesFunnel: React.FC = () => {
           leads={assigned} 
           onDropLead={handleDropLead} 
           onDragOver={handleDragOver} 
+          onEdit={handleEditLead}
+          onDelete={handleDeleteLead}
         />
         <FunnelStage 
           title="Contactados" 
@@ -262,6 +319,8 @@ const SalesFunnel: React.FC = () => {
           leads={contacted} 
           onDropLead={handleDropLead} 
           onDragOver={handleDragOver} 
+          onEdit={handleEditLead}
+          onDelete={handleDeleteLead}
         />
         <FunnelStage 
           title="Cierre" 
@@ -270,10 +329,55 @@ const SalesFunnel: React.FC = () => {
           leads={closed} 
           onDropLead={handleDropLead} 
           onDragOver={handleDragOver} 
+          onEdit={handleEditLead}
+          onDelete={handleDeleteLead}
         />
       </div>
 
       <NewLead isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveLead} />
+      <LeadEdit
+        lead={leadToEdit}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={async (updatedLead) => {
+          console.log('Lead actualizado:', updatedLead); 
+  
+          try {
+              const response = await fetch(`http://localhost:5000/leads/${updatedLead.idlead}`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+                  },
+                  body: JSON.stringify({
+                      idlead: updatedLead.idlead,
+                      nombre: updatedLead.name,
+                      contact: updatedLead.contact,
+                      social: updatedLead.social,
+                      estatus: updatedLead.estatus,
+                  }),
+              });
+  
+              if (!response.ok) {
+                const errorData = await response.json(); 
+                console.error('Error al actualizar el lead:', errorData);
+                throw new Error('Error al actualizar el lead');
+            } else {
+                const updatedData = await response.json(); // aqui se capturan los datos actualizados
+                console.log('Lead actualizado en la base de datos:', updatedData);
+            }
+  
+              setProspects((prev) => prev.map((lead) => (lead.idlead === updatedLead.idlead ? updatedLead : lead)));
+              setAssigned((prev) => prev.map((lead) => (lead.idlead === updatedLead.idlead ? updatedLead : lead)));
+              setContacted((prev) => prev.map((lead) => (lead.idlead === updatedLead.idlead ? updatedLead : lead)));
+              setClosed((prev) => prev.map((lead) => (lead.idlead === updatedLead.idlead ? updatedLead : lead)));
+              setIsEditModalOpen(false);
+          } catch (error) {
+              console.error('Error al actualizar el lead:', error);
+          }
+        }}
+        onDelete={handleDeleteLead}
+      />
     </div>
   );
 };

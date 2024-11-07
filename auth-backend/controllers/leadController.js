@@ -38,16 +38,48 @@ exports.getLeadsByUser = async (req, res) => {
 };
 
 exports.updateLead = async (req, res) => {
-    const { estatus, idlead } = req.body;
+    const { idlead, estatus, nombre, contact, social } = req.body;
 
-    if (!estatus || !idlead) {
-        return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    if (!idlead) {
+        return res.status(400).json({ message: 'El ID del lead es obligatorio' });
     }
 
-    const query = 'UPDATE leads SET estatus = ? WHERE idlead = ?';
+    const updates = [];
+    const values = [];
+
+    if (estatus) {
+        updates.push('estatus = ?');
+        values.push(estatus);
+    }
+    if (nombre) {
+        updates.push('nombre = ?');
+        values.push(nombre);
+    }
+    if (contact) {
+        updates.push('contacto = ?');
+        values.push(contact);
+    }
+    if (social) {
+        updates.push('red_social = ?');
+        values.push(social);
+    }
+
+    // Si no hay campos a actualizar se devuelve error
+    if (updates.length === 0) {
+        return res.status(400).json({ message: 'No se especificaron cambios' });
+    }
+
+    // el ID del lead se agrega al final de los valores
+    values.push(idlead);
+
+    // consulta SQL
+    const query = `UPDATE leads SET ${updates.join(', ')} WHERE idlead = ?`;
 
     try {
-        const [result] = await db.query(query, [estatus, idlead]);
+        const [result] = await db.query(query, values);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Lead no encontrado' });
+        }
         res.status(200).json({ message: 'Lead actualizado correctamente' });
     } catch (err) {
         console.error('Error en el servidor:', err);

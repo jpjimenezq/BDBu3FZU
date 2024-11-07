@@ -30,6 +30,10 @@ app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
 app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUser);
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
 app.post('/leads/nuevos',leadController.getNuevosLeads);
+
+//app.delete('/leads/:id', authMiddleware.authenticateToken, leadController.deleteLead);
+app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLead);
+
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });
