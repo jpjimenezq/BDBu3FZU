@@ -2,24 +2,17 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const db = require('./models/db'); // Importa la conexión a la base de datos
-const authMiddleware = require('./middlewares/authMiddleware'); // Middleware de autenticación
-const authController = require('./controllers/authController'); // Controlador de autenticación
-const userController = require('./controllers/userController'); // Importa el controlador de usuarios
+const db = require('./models/db');
+const authMiddleware = require('./middlewares/authMiddleware');
+const authController = require('./controllers/authController');
+const userController = require('./controllers/userController');
 const leadController = require('./controllers/leadController');
+const checkout = require('./checkout/paypal')
 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-/*db.connect((err) => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-    } else {
-        console.log('Connected to MySQL database');
-    }
-});*/
 
 // Rutas
 app.post('/register', authController.register);
@@ -29,7 +22,9 @@ app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
 app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
 app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUser);
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
-app.post('/leads/nuevos',leadController.getNuevosLeads);
+app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);
+app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
+app.post('/paypal/checkout',checkout.POST);
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });
