@@ -45,8 +45,8 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick, activeSection }) =>
       <NavItem
         icon={<CreditCard className="w-4 h-4" />}
         label="Suscripción"
-        isActive={activeSection === 'Suscripción'}
-        onClick={() => onNavClick('Suscripción')}
+        isActive={activeSection === 'Suscripcion'}
+        onClick={() => onNavClick('Suscripcion')}
       />
       <NavItem
         icon={<Database className="w-4 h-4" />}

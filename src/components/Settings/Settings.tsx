@@ -3,6 +3,7 @@ import Header from './Header';
 import Navigation from './Navigation';
 import ProfileForm from './ProfileForm';
 import ProfilePass from './ProfilePass';
+import Suscription from './Suscription';
 
 const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState('Perfil');
@@ -20,6 +21,7 @@ const Settings: React.FC = () => {
           <div className="p-6">
             {activeSection === 'Perfil' && <ProfileForm />}
             {activeSection === 'Seguridad' && <ProfilePass />}
+            {activeSection === 'Suscripcion' && <Suscription />}
             {/* Agrega otros componentes correspondientes aquí */}
           </div>
         </div>

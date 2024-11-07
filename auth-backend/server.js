@@ -7,6 +7,7 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const leadController = require('./controllers/leadController');
+const checkout = require('./checkout/paypal')
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUse
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
 app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);
 app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
+app.post('/paypal/checkout',checkout.POST);
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });
