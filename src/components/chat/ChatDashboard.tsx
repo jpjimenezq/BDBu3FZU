@@ -1,28 +1,29 @@
 // src/components/chat/ChatDashboard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import ChatSidebar from './ChatSideBar';
-import ChatHeader from './ChatHeader'; 
-import ChatMainContent from './ChatMainContact';
+import ChatHeader from './ChatHeader';
+import ChatMainContact from './ChatMainContact';
 import ChatAttributesPanel from './ChatAttributesPanel';
 
 const ChatDashboard: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // Estado para el número de contacto buscado
+
   return (
     <div className="flex h-full">
-      
-
-      {/* Espacio para otros componentes del dashboard */}
       <div className="flex-1 flex flex-col">
-        {/* Renderiza otros componentes, como ChatHeader o una ventana de chat */}
-        <ChatHeader searchQuery="" setSearchQuery={() => {}} /> {/* Asegúrate de pasar las props requeridas */}
-        {/* Aquí puedes agregar otros componentes como ChatWindow */}
-        {/* Renderiza el ChatSidebar */}
+        {/* Renderiza el ChatHeader con búsqueda de contactos */}
+        <ChatHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
         <div className="flex-1 flex">
-            <ChatSidebar />
-            <ChatMainContent />
-            <ChatAttributesPanel />
+          {/* Barra lateral */}
+          <ChatSidebar />
+
+          {/* Contenido principal del chat */}
+          <ChatMainContact searchQuery={searchQuery} /> {/* Pasamos el número de contacto */}
+
+          {/* Panel de atributos del chat */}
+          <ChatAttributesPanel />
         </div>
-        
-        
       </div>
     </div>
   );
