@@ -1,5 +1,5 @@
 // LeadEdit.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Lead {
   idlead: string;
@@ -21,6 +21,12 @@ interface LeadEditProps {
 const LeadEdit: React.FC<LeadEditProps> = ({ lead, isOpen, onClose, onSave, onDelete }) => {
   const [updatedLead, setUpdatedLead] = useState<Lead>(lead || { idlead: '', name: '', contact: '', social: '' });
 
+  useEffect(() => {
+    if (lead) {
+        setUpdatedLead(lead);
+    }
+    }, [lead]);
+    
   if (!isOpen || !lead) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +35,7 @@ const LeadEdit: React.FC<LeadEditProps> = ({ lead, isOpen, onClose, onSave, onDe
   };
 
   const handleSave = () => {
+    console.log('Guardando lead editado:', updatedLead);
     onSave(updatedLead);
     onClose();
   };
@@ -72,8 +79,8 @@ const LeadEdit: React.FC<LeadEditProps> = ({ lead, isOpen, onClose, onSave, onDe
           <button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             Guardar
           </button>
-          <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-            Eliminar
+          <button onClick={onClose} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+            Cancelar
           </button>
         </div>
         <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">

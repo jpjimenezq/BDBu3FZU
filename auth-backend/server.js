@@ -22,6 +22,11 @@ app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
 app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
 app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUser);
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
+app.post('/leads/nuevos',leadController.getNuevosLeads);
+
+//app.delete('/leads/:id', authMiddleware.authenticateToken, leadController.deleteLead);
+app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLead);
+
 app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);
 app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
 app.post('/paypal/checkout',checkout.POST);
