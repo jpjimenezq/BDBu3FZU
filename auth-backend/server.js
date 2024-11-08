@@ -28,10 +28,6 @@ app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLea
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
 app.post('/leads/nuevos',leadController.getNuevosLeads);
 
-//app.delete('/leads/:id', authMiddleware.authenticateToken, leadController.deleteLead);
-app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLead);
-app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);
-
 // Usuarios
 app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
 app.post('/users/updateUser', authMiddleware.authenticateToken, userController.updateUserData);
