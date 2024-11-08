@@ -129,31 +129,35 @@ const SubscriptionForm: React.FC = () => {
             </div>
         </div>
       </div>
-      <PayPalScriptProvider options={{ clientId: "AYFlhL6AJ-XFXJ38nKfhw0Oeqok4y_-CdhpQihpI6ar5KsEW4bz2CCVhktKyAaBInOdiECSKNzCYO-gp" }}>
-        <PayPalButtons 
-            style={{ layout: "horizontal" }}    
-            createOrder={async () => {
-                try {
-                    const res = await fetch('http://localhost:5000/paypal/checkout', {
-                        method: "POST"
-                    });
-                    
-                    // Verifica si la respuesta fue exitosa
-                    if (!res.ok) {
-                        throw new Error('Error al crear el pedido en el servidor');
-                    }
-                    
-                    const order = await res.json();
-                    console.log(order)
-                    return order.id
-                } catch (error) {
-                    console.error('Error al crear el pedido:', error);
-                    // Puedes manejar el error de otra forma si es necesario
-                    throw error; // Opcional: Lanza el error si quieres manejarlo externamente
-                }
-            }}
-        />
-    </PayPalScriptProvider>
+      <div className="m-3 flex justify-center items-center">
+        <PayPalScriptProvider options={{ clientId: "AYFlhL6AJ-XFXJ38nKfhw0Oeqok4y_-CdhpQihpI6ar5KsEW4bz2CCVhktKyAaBInOdiECSKNzCYO-gp" }}>
+          <PayPalButtons
+              style={{ layout: "horizontal",
+                color: "blue"
+               }}
+              createOrder={async () => {
+                  try {
+                      const res = await fetch('http://localhost:5000/checkout/paypal', {
+                          method: "POST"
+                      });
+
+                      // Verifica si la respuesta fue exitosa
+                      if (!res.ok) {
+                          throw new Error('Error al crear el pedido en el servidor');
+                      }
+
+                      const order = await res.json();
+                      console.log(order)
+                      return order.id
+                  } catch (error) {
+                      console.error('Error al crear el pedido:', error);
+                      // Puedes manejar el error de otra forma si es necesario
+                      throw error; // Opcional: Lanza el error si quieres manejarlo externamente
+                  }
+              }}
+          />
+        </PayPalScriptProvider>
+      </div>
 
     </div>
   );
