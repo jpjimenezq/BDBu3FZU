@@ -18,7 +18,6 @@ app.use(express.json());
 app.post('/register', authController.register);
 app.post('/login', authController.login);
 app.post('/token', authController.token);
-app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
 app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
 app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUser);
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
@@ -28,8 +27,13 @@ app.post('/leads/nuevos',leadController.getNuevosLeads);
 app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLead);
 
 app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);
-app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
 app.post('/paypal/checkout',checkout.POST);
+
+// Usuarios
+app.post('/users/getUser',authMiddleware.authenticateToken,userController.getUserData);
+app.post('/users/updateUser', authMiddleware.authenticateToken, userController.updateUserData);
+app.get('/user', authMiddleware.authenticateToken, userController.getUserById);
+
 app.get('/protected', authMiddleware.authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Ruta protegida accedida con éxito', user: req.user });
 });
