@@ -18,7 +18,7 @@ app.use(express.json());
 app.post('/register', authController.register);
 app.post('/login', authController.login);
 app.post('/token', authController.token);
-app.post('/paypal/checkout',checkout.POST);
+app.post('/checkout/paypal',checkout.POST);
 
 //leads
 app.post('/leads', authMiddleware.authenticateToken, leadController.addLead);
