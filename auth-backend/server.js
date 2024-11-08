@@ -24,7 +24,7 @@ app.post('/lead', authMiddleware.authenticateToken, leadController.getLeadsByUse
 app.post('/moveLead',authMiddleware.authenticateToken,leadController.updateLead);
 app.post('/leads/nuevos',leadController.getNuevosLeads);
 
-//app.delete('/leads/:id', authMiddleware.authenticateToken, leadController.deleteLead);
+app.delete('/leads/:id', authMiddleware.authenticateToken, leadController.deleteLead);
 app.put('/leads/:id', authMiddleware.authenticateToken, leadController.updateLead);
 
 app.post('/leads/nuevos',authMiddleware.authenticateToken,leadController.getNuevosLeads);

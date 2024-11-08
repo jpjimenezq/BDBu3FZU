@@ -132,3 +132,26 @@ exports.getNuevosLeads = async (req, res) => {
         res.status(500).json({ message: 'Error en el servidor' });
     }
 };
+
+exports.deleteLead = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ message: 'El ID del lead es obligatorio' });
+    }
+
+    const query = 'DELETE FROM leads WHERE idlead = ?';
+
+    try {
+        const [result] = await db.query(query, [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Lead no encontrado' });
+        }
+
+        res.status(200).json({ message: 'Lead eliminado con éxito' });
+    } catch (err) {
+        console.error('Error al eliminar el lead:', err);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};

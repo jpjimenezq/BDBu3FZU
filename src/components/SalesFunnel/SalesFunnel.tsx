@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Brain, Star, MessageCircle, CheckCircle } from 'lucide-react';
 import NewLead from './NewLead';
 import LeadEdit from './LeadEdit';
+import LeadDelete from './LeadDelete';
 
 interface Lead {
   idlead: string;
@@ -97,6 +98,8 @@ const SalesFunnel: React.FC = () => {
   const [closed, setClosed] = useState<Lead[]>([]);
   const [leadToEdit, setLeadToEdit] = useState<Lead | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<string | null>(null); 
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -234,28 +237,37 @@ const SalesFunnel: React.FC = () => {
   };
 
   const handleDeleteLead = async (idlead: string) => {
-    console.log("Eliminando lead en SalesFunnel con ID:", idlead); //
-    try {
-      const response = await fetch(`http://localhost:5000/leads/${idlead}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
-        },
-      });
+    setLeadToDelete(idlead);
+    setIsDeleteModalOpen(true); 
+  };
 
-      if (response.ok) {
-        console.log(`Lead con ID ${idlead} eliminado con éxito`);
-        setProspects((prev) => prev.filter(lead => lead.idlead !== idlead));
-        setAssigned((prev) => prev.filter(lead => lead.idlead !== idlead));
-        setContacted((prev) => prev.filter(lead => lead.idlead !== idlead));
-        setClosed((prev) => prev.filter(lead => lead.idlead !== idlead));
-      } else {
-        const data = await response.json();
-        console.error('Error al eliminar el lead:', data.message);
+  const confirmDelete = async () => {
+    if (leadToDelete) {
+      try {
+        const response = await fetch(`http://localhost:5000/leads/${leadToDelete}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+          },
+        });
+
+        if (response.ok) {
+          console.log(`Lead con ID ${leadToDelete} eliminado con éxito`);
+          setProspects((prev) => prev.filter(lead => lead.idlead !== leadToDelete));
+          setAssigned((prev) => prev.filter(lead => lead.idlead !== leadToDelete));
+          setContacted((prev) => prev.filter(lead => lead.idlead !== leadToDelete));
+          setClosed((prev) => prev.filter(lead => lead.idlead !== leadToDelete));
+        } else {
+          const data = await response.json();
+          console.error('Error al eliminar el lead:', data.message);
+        }
+      } catch (error) {
+        console.error('Error de conexión al eliminar el lead:', error);
+      } finally {
+        setIsDeleteModalOpen(false); 
+        setLeadToDelete(null); 
       }
-    } catch (error) {
-      console.error('Error de conexión al eliminar el lead:', error);
     }
   };
 
@@ -377,6 +389,11 @@ const SalesFunnel: React.FC = () => {
           }
         }}
         onDelete={handleDeleteLead}
+      />
+      <LeadDelete 
+          isOpen={isDeleteModalOpen} 
+          onClose={() => setIsDeleteModalOpen(false)} 
+          onConfirm={confirmDelete} 
       />
     </div>
   );
