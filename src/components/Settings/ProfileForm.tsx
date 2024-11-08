@@ -23,7 +23,6 @@ const ProfileForm: React.FC = () => {
         return;
       }
 
-      //Con userID nos referios al email
       const payload = JSON.parse(atob(token.split('.')[1]));
       const userId = payload.userId;
 
@@ -31,7 +30,7 @@ const ProfileForm: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('refreshToken')}`, // Envía el token de autenticación
+          Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
         },
         body: JSON.stringify({ userId }),
       });
@@ -54,6 +53,35 @@ const ProfileForm: React.FC = () => {
     }
   };
 
+  const updateProfileData = async () => {
+    try {
+      const token = localStorage.getItem('refreshToken'); 
+      if (!token) {
+        console.error('Token de autenticación no encontrado');
+        return;
+      }
+  
+      const response = await fetch('http://localhost:5000/users/updateUser', {
+        method: 'POST', // Cambia PUT por POST
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profile), // Enviar el perfil completo como un solo objeto
+      });
+  
+      if (!response.ok) {
+        console.error('Error en la actualización del perfil:', response.status);
+        return;
+      }
+  
+      console.log('Perfil actualizado con éxito');
+      fetchProfileData(); // Actualiza el perfil después de guardar cambios
+    } catch (error) {
+      console.error('Error al actualizar el perfil:', error);
+    }
+  };
+
   useEffect(() => {
     fetchProfileData();
   }, []);
@@ -69,7 +97,7 @@ const ProfileForm: React.FC = () => {
         className="space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
-          fetchProfileData();
+          updateProfileData(); // Llama a la función de actualización al enviar el formulario
         }}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

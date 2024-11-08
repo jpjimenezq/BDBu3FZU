@@ -63,8 +63,8 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick, activeSection }) =>
       <NavItem
         icon={<Building2 className="w-4 h-4" />}
         label="Facturación"
-        isActive={activeSection === 'Facturación'}
-        onClick={() => onNavClick('Facturación')}
+        isActive={activeSection === 'Facturacion'}
+        onClick={() => onNavClick('Facturacion')}
       />
       <NavItem
         icon={<Users className="w-4 h-4" />}
